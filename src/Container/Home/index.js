@@ -138,20 +138,6 @@ const Index = ({ ...props }) => {
                         time_zone: 3000,
                         task_msg: taskDetails.description,
                     });
-                    setPrevTasks((prev) => {
-                        return [
-                            ...prev,
-                            {
-                                description: taskDetails.description,
-                                userid: taskDetails.assigendTo,
-                                assignedto: 'Subi Sir',
-                                created: `${new Date(taskDetails.date).getMonth() + 1}/${new Date(
-                                    taskDetails.date
-                                ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${value}:00`,
-                                id: -1,
-                            },
-                        ];
-                    });
 
                     if (res.data.code !== 500) {
                         setPrevTasks((prev) => {
