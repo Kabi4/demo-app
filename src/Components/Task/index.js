@@ -44,8 +44,15 @@ const Index = ({ description, taskDeleted, toggleLoading, created, userid, id, a
                 `${local_url}/task/lead_6996a7dcdddc4af3b4f71ccb985cea38/${id}`,
                 {
                     assigned_user: taskDetails.assigendTo,
-                    task_date: taskDetails.date,
-                    task_time: taskDetails.time,
+                    task_date: `${new Date(taskDetails.date).getFullYear()}-${
+                        new Date(taskDetails.date).getMonth() + 1
+                    }-${new Date(taskDetails.date).getDate()}`,
+                    task_time:
+                        new Date(
+                            `${new Date(taskDetails.date).getFullYear()}-${
+                                new Date(taskDetails.date).getMonth() + 1
+                            }-${new Date(taskDetails.date).getDate()} ${value}:00`
+                        ).getTime() / 1000,
                     is_completed: 0,
                     time_zone: 3000,
                     task_msg: taskDetails.description,

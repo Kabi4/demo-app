@@ -109,9 +109,9 @@ const Index = ({ ...props }) => {
                         }-${new Date(taskDetails.date).getDate()}`,
                         task_time:
                             new Date(
-                                `${new Date(taskDetails.date).getMonth() + 1}/${new Date(
-                                    taskDetails.date
-                                ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${value}:00`
+                                `${new Date(taskDetails.date).getFullYear()}-${
+                                    new Date(taskDetails.date).getMonth() + 1
+                                }-${new Date(taskDetails.date).getDate()} ${value}:00`
                             ).getTime() / 1000,
                         is_completed: 0,
                         time_zone: 3000,
@@ -133,7 +133,12 @@ const Index = ({ ...props }) => {
                         task_date: `${new Date(taskDetails.date).getFullYear()}-${
                             new Date(taskDetails.date).getMonth() + 1
                         }-${new Date(taskDetails.date).getDate()}`,
-                        task_time: `${value}:00`,
+                        task_time:
+                            new Date(
+                                `${new Date(taskDetails.date).getFullYear()}-${
+                                    new Date(taskDetails.date).getMonth() + 1
+                                }-${new Date(taskDetails.date).getDate()} ${value}:00`
+                            ).getTime() / 1000,
                         is_completed: 0,
                         time_zone: 3000,
                         task_msg: taskDetails.description,
