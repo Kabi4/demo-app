@@ -1,0 +1,15 @@
+/* .header {
+    width: 100%;
+    justify-content: space-evenly;
+    height: 6rem;
+} */
+.tasks {
+    background-color: #edf7fc;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
+    column-gap: 2rem;
+    row-gap: 2rem;
+    min-height: 100vh;
+}

@@ -1,0 +1,59 @@
+.custom_input {
+    position: relative;
+    margin: 15px 0;
+}
+
+.custom_input_input {
+    width: 100%;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid skyblue;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: transparent;
+    transition: 0.4s all ease;
+}
+
+.custom_input_label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 5px;
+    transition: all 0.2s linear;
+    font-size: 14px;
+    font-weight: 600;
+    backface-visibility: hidden;
+}
+
+.custom_input_input:focus {
+    background-color: rgba(219, 217, 217, 0.37);
+}
+.custom_input_input:invalid,
+.custom_input_error {
+    border-bottom: 1px solid red;
+}
+
+.custom_input_valid {
+    border-bottom: 1px solid lawngreen;
+}
+
+.custom_input_input:focus + .custom_input_label {
+    top: 0;
+    transform: translateY(-40%);
+    font-size: 10px;
+}
+
+.custom_input_filled + .custom_input_label {
+    top: 0;
+    transform: translateY(-40%);
+    font-size: 10px;
+}
+.login,
+.loginbox {
+    backdrop-filter: blur(2px);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+}
+.loginbox > h3 {
+    text-align: center;
+}
