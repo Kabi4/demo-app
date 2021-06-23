@@ -105,8 +105,8 @@ const Index = ({ description, taskDeleted, toggleLoading, created, userid, id, a
             <p>Task Assigned Date & Time: </p>
             <div className="date-time">
                 <DatePicker
-                    onChange={(e) => {
-                        changehanlder('date', e.target.value);
+                    onChange={(value) => {
+                        changehanlder('date', value);
                     }}
                     value={taskDetails.date}
                 />
@@ -129,7 +129,9 @@ const Index = ({ description, taskDeleted, toggleLoading, created, userid, id, a
                     <option aria-label="None" value="" />
                     <option value={userid}>{assignedto}</option>
                     {users.map((ele) => (
-                        <option value={ele.value}>{ele.name}</option>
+                        <option key={ele.value} value={ele.value}>
+                            {ele.name}
+                        </option>
                     ))}
                 </Select>
             </FormControl>

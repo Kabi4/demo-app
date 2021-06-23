@@ -138,6 +138,21 @@ const Index = ({ ...props }) => {
                         time_zone: 3000,
                         task_msg: taskDetails.description,
                     });
+                    setPrevTasks((prev) => {
+                        return [
+                            ...prev,
+                            {
+                                description: taskDetails.description,
+                                userid: taskDetails.assigendTo,
+                                assignedto: 'Subi Sir',
+                                created: `${new Date(taskDetails.date).getMonth() + 1}/${new Date(
+                                    taskDetails.date
+                                ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${value}:00`,
+                                id: -1,
+                            },
+                        ];
+                    });
+
                     if (res.data.code !== 500) {
                         setPrevTasks((prev) => {
                             return [
@@ -202,8 +217,8 @@ const Index = ({ ...props }) => {
                         <p>Task Assigned Date & Time: </p>
                         <div className="date-time">
                             <DatePicker
-                                onChange={(e) => {
-                                    changehanlder('date', e.target.value);
+                                onChange={(value) => {
+                                    changehanlder('date', value);
                                 }}
                                 value={taskDetails.date}
                             />
@@ -226,7 +241,9 @@ const Index = ({ ...props }) => {
                                 <option aria-label="None" value="" />
 
                                 {users.map((ele) => (
-                                    <option value={ele.value}>{ele.name}</option>
+                                    <option key={ele.value} value={ele.value}>
+                                        {ele.name}
+                                    </option>
                                 ))}
                             </Select>
                         </FormControl>
