@@ -4,19 +4,19 @@ import React, { useEffect, useState } from 'react';
 import { local_url } from '../../localUrl';
 import './style.css';
 import Spinner from '../../Utils/Spinner/Index';
-import Modal from '../../Utils/popupModal';
 
 import { Task } from '../../Components/index';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import DatePicker from 'react-date-picker';
-
 import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
+
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import TimePicker from 'react-time-picker';
 
+import AddIcon from '@material-ui/icons/Add';
+import { CSSTransition } from 'react-transition-group';
+import RemoveIcon from '@material-ui/icons/Remove';
 const useStyles = makeStyles((theme) => ({
     formControl: {
         margin: theme.spacing(1),
@@ -32,7 +32,7 @@ const Index = ({ ...props }) => {
     const [modal, setModal] = useState(false);
     const [prevtasks, setPrevTasks] = useState([]);
     const [users, setUsers] = useState([]);
-    const [value, onChange] = useState(`${new Date(Date.now()).getHours()}:${new Date(Date.now()).getMinutes()}`);
+    const [value, onChange] = useState(`07:00`);
     const [taskDetails, setTaskDetails] = useState({
         date: new Date(Date.now()),
         assigendTo: '',
@@ -133,12 +133,7 @@ const Index = ({ ...props }) => {
                         task_date: `${new Date(taskDetails.date).getFullYear()}-${
                             new Date(taskDetails.date).getMonth() + 1
                         }-${new Date(taskDetails.date).getDate()}`,
-                        task_time:
-                            new Date(
-                                `${new Date(taskDetails.date).getFullYear()}-${
-                                    new Date(taskDetails.date).getMonth() + 1
-                                }-${new Date(taskDetails.date).getDate()} ${value}:00`
-                            ).getTime() / 1000,
+                        task_time: value,
                         is_completed: 0,
                         time_zone: 3000,
                         task_msg: taskDetails.description,
@@ -183,71 +178,135 @@ const Index = ({ ...props }) => {
             return old;
         });
     };
+
     return (
         <>
-            <Modal
-                style={{ maxWidth: '50rem' }}
-                state={modal}
-                setStateFalse={() => {
-                    setModal(false);
-                }}
-            >
-                <div style={{ backgroundColor: 'white', borderRadius: '1rem', border: '1px solid black' }}>
-                    <h2 style={{ borderRadius: ' 1rem 1rem 0 0', padding: '1rem' }} className="heading_primary">
-                        Add A Task
-                    </h2>
-                    <div style={{ maxWidth: '50rem', borderRadius: '0 0 1rem 1rem', border: 'none' }} className="task">
-                        <p>Task Description</p>
-                        <input
-                            className="task_input"
-                            value={taskDetails.description}
-                            onChange={(e) => {
-                                changehanlder('description', e.target.value);
-                            }}
-                        />
-                        <p>Task Assigned Date & Time: </p>
-                        <div className="date-time">
-                            <DatePicker
-                                onChange={(value) => {
-                                    changehanlder('date', value);
-                                }}
-                                value={taskDetails.date}
-                            />
-                            <TimePicker onChange={onChange} value={value} />
-                        </div>
-                        <p>Task Assigned To: </p>
-                        <FormControl className={`${classes.formControl} task_select`}>
-                            <InputLabel htmlFor="user-native-simple">Assigned To: </InputLabel>
-                            <Select
-                                native
-                                value={taskDetails.assigendTo}
-                                onChange={(e) => {
-                                    changehanlder('assigendTo', e.target.value);
-                                }}
-                                inputProps={{
-                                    name: 'user',
-                                    id: 'user-native-simple',
-                                }}
-                            >
-                                <option aria-label="None" value="" />
-
-                                {users.map((ele) => (
-                                    <option key={ele.value} value={ele.value}>
-                                        {ele.name}
-                                    </option>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <button onClick={onAddHandler} style={{ margin: '1rem auto' }} className="btn-primary">
-                            Add Task
-                        </button>
-                    </div>
-                </div>
-            </Modal>
             {loading && <Spinner />}
-            <button style={{ margin: '1rem auto' }} onClick={() => setModal((prev) => !prev)} className="btn-primary">
-                Add Task
-            </button>
+            <h2 className="heading">Adding New Task</h2>
+
+            <div className="add_task">
+                <div className="add_task_header">
+                    <p className="add_task_heading">
+                        Tasks &nbsp;<span style={{ color: '#cdcdcd' }}>{prevtasks.length}</span>
+                    </p>
+                    {modal ? (
+                        <RemoveIcon
+                            onClick={(e) => {
+                                setModal((prev) => !prev);
+                            }}
+                            className="task_head_icon"
+                        />
+                    ) : (
+                        <AddIcon
+                            onClick={(e) => {
+                                setModal((prev) => !prev);
+                            }}
+                            className="task_head_icon"
+                        />
+                    )}
+                </div>
+                <CSSTransition
+                    in={modal}
+                    mountOnEnter
+                    unmountOnExit
+                    timeout={{
+                        enter: 50,
+                        exit: 200,
+                    }}
+                    classNames="open"
+                >
+                    <div className="add_task_body">
+                        <div>
+                            <p>Task Description</p>
+                            <input
+                                className="task_input"
+                                value={taskDetails.description}
+                                onChange={(e) => {
+                                    changehanlder('description', e.target.value);
+                                }}
+                                placeholder="Enter Task"
+                            />
+                        </div>
+                        <div className="display_flex">
+                            <div>
+                                <p>Date</p>
+                                <DatePicker
+                                    onChange={(value) => {
+                                        changehanlder('date', value);
+                                    }}
+                                    value={taskDetails.date}
+                                />
+                            </div>
+                            <div>
+                                <p>Time</p>
+                                <FormControl className={`${classes.formControl} task_select`}>
+                                    <Select
+                                        native
+                                        value={value}
+                                        onChange={(e) => {
+                                            onChange(e.target.value);
+                                        }}
+                                        inputProps={{
+                                            name: 'user',
+                                            id: 'user-native-simple',
+                                        }}
+                                    >
+                                        {Array.from(Array(48).keys()).map((ele, i) => (
+                                            <option key={i} value={ele.value}>
+                                                {`${i < 20 ? '0' : ''}${i % 2 === 0 ? i / 2 : (i - 1) / 2}:${
+                                                    i % 2 === 0 ? '00' : '30'
+                                                }`}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                        </div>
+                        <div>
+                            <p>Assign User:</p>
+
+                            <FormControl className={`${classes.formControl} task_select`}>
+                                <Select
+                                    native
+                                    value={taskDetails.assigendTo}
+                                    onChange={(e) => {
+                                        changehanlder('assigendTo', e.target.value);
+                                    }}
+                                    inputProps={{
+                                        name: 'user',
+                                        id: 'user-native-simple',
+                                    }}
+                                >
+                                    <option aria-label="None" value="">
+                                        Please Select a user
+                                    </option>
+
+                                    {users.map((ele) => (
+                                        <option key={ele.value} value={ele.value}>
+                                            {ele.name}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </div>
+                        <div className="btn-bottom">
+                            <button
+                                onClick={(e) => {
+                                    setModal((prev) => !prev);
+                                }}
+                                style={{ marginRight: '1rem' }}
+                                className="btn-secondary"
+                            >
+                                Cancel
+                            </button>
+                            <button onClick={onAddHandler} className="btn-primary">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </CSSTransition>
+            </div>
+            <h2 className="heading">Previous Tasks</h2>
             <div className="tasks">
                 {prevtasks.map((ele, i) => (
                     <Task

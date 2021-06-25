@@ -4,12 +4,97 @@
     height: 6rem;
 } */
 .tasks {
-    background-color: #edf7fc;
     padding: 2rem;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     grid-template-rows: auto;
     column-gap: 2rem;
     row-gap: 2rem;
     min-height: 100vh;
+}
+
+.add_task {
+    width: 300px;
+    height: max-content;
+    margin-top: 4rem;
+    margin-left: 4rem;
+    background-color: #edf7fc;
+}
+.task_head_icon {
+    font-size: 2.8rem !important;
+    padding: 5px;
+    cursor: pointer;
+}
+.add_task_heading {
+    font-size: 1.6rem;
+    border-right: 1px solid #cdcdcd;
+    text-transform: uppercase;
+    flex: 1;
+    text-align: left;
+    padding: 5px;
+}
+.add_task_header {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #cdcdcd;
+    align-items: center;
+    border-radius: 4px 4px 0 0;
+    background-color: white;
+}
+
+.display_flex {
+    display: flex;
+    align-items: stretch;
+}
+
+.display_flex > * {
+    width: 50%;
+}
+.MuiFormControl-root {
+    margin: 0 !important;
+}
+.add_task_body {
+    border: 1px solid #cdcdcd;
+    border-top: none;
+    padding: 1rem;
+    border-radius: 0 0 4px 4px;
+}
+
+.add_task_body > div {
+    margin-top: 1rem;
+}
+.btn-bottom {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.add_task_body {
+    opacity: 0;
+    transform-origin: top center;
+    transition: all 0.2s ease-in-out;
+}
+.add_task_body.open-enter-active {
+    transform: scaleY(0);
+    opacity: 0;
+}
+.add_task_body.open-enter-done {
+    opacity: 1;
+    transform: scaleY(1);
+}
+
+.heading {
+    text-align: center;
+    color: #47bb7f;
+    font-size: 2.4rem;
+}
+
+.delete_icon {
+    margin-right: auto !important;
+    font-size: 2.8rem !important;
+    cursor: pointer !important;
+    color: #cdcdcd !important;
+    transition: all 0.2s ease-in-out !important;
+}
+.delete_icon:hover {
+    color: red !important;
 }
