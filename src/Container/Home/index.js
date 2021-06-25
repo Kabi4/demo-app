@@ -123,34 +123,30 @@ const Index = ({ ...props }) => {
                 .then((res) => {
                     setLoading((prev) => !prev);
 
-                    if (res.data.code !== 500) {
-                        setPrevTasks((prev) => {
-                            return [
-                                ...prev,
-                                {
-                                    task_msg: taskDetails.description,
-                                    user_id: taskDetails.assigendTo,
-                                    assigned_user: 'Subi Sir',
-                                    created: `${new Date(taskDetails.date).getMonth() + 1}/${new Date(
-                                        taskDetails.date
-                                    ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${`${parseInt(
-                                        value / 3600
-                                    )}:${parseInt(value % 60)}`}:00`,
-                                    time: value,
-                                    id: res.data.results.id,
-                                },
-                            ];
-                        });
-                        alert(`Task Added!`);
-                        setTaskDetails({
-                            date: new Date(Date.now()),
-                            assigendTo: '',
-                            description: '',
-                        });
-                        setModal((prev) => !prev);
-                    } else {
-                        alert('Some  api is not properly working!');
-                    }
+                    setPrevTasks((prev) => {
+                        return [
+                            ...prev,
+                            {
+                                task_msg: taskDetails.description,
+                                user_id: taskDetails.assigendTo,
+                                assigned_user: 'Subi Sir',
+                                created: `${new Date(taskDetails.date).getMonth() + 1}/${new Date(
+                                    taskDetails.date
+                                ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${`${parseInt(
+                                    value / 3600
+                                )}:${parseInt(value % 60)}`}:00`,
+                                task_time: res.data.results.task_time,
+                                id: res.data.results.id,
+                            },
+                        ];
+                    });
+                    alert(`Task Added!`);
+                    setTaskDetails({
+                        date: new Date(Date.now()),
+                        assigendTo: '',
+                        description: '',
+                    });
+                    setModal((prev) => !prev);
                 })
                 .catch((err) => {
                     setLoading((prev) => !prev);

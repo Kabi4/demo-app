@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 const Index = ({ description, taskDeleted, time, toggleLoading, created, userid, id, assignedto, users, ...props }) => {
     const classes = useStyles();
-
+    console.log(time);
     const [modal, setModal] = useState(false);
     const [value, onChange] = useState(time);
     const [taskDetails, setTaskDetails] = useState({
