@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import './style.css';
-import DatePicker from 'react-date-picker';
+import DatePicker from 'react-datepicker';
 import { makeStyles } from '@material-ui/core/styles';
 
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
 import axios from 'axios';
+import DateRangeIcon from '@material-ui/icons/DateRange';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import UnfoldMoreIcon from '@material-ui/icons/UnfoldMore';
 
 import { local_url } from '../../localUrl';
 import { connect } from 'react-redux';
@@ -44,6 +47,7 @@ const Index = ({ description, taskDeleted, toggleLoading, created, userid, id, a
             return old;
         });
     };
+    console.log(description, created, userid, id, assignedto);
     const onUpdateHandler = async (e) => {
         e.preventDefault();
         toggleLoading();
@@ -155,67 +159,92 @@ const Index = ({ description, taskDeleted, toggleLoading, created, userid, id, a
                         />
                     </div>
                     <div className="display_flex">
-                        <div>
+                        <div style={{ position: 'relative' }}>
                             <p>Date</p>
-                            <DatePicker
-                                onChange={(value) => {
-                                    changehanlder('date', value);
-                                }}
-                                value={taskDetails.date}
-                            />
+                            <label>
+                                <DatePicker
+                                    className="filter_date_picker"
+                                    placeholderText="Start Date"
+                                    selected={taskDetails.date}
+                                    onChange={(date) => {
+                                        changehanlder('date', date);
+                                        return;
+                                    }}
+                                />
+                                <DateRangeIcon className="date-cion" />
+                            </label>
                         </div>
-                        <div>
+                        <div style={{ position: 'relative' }}>
                             <p>Time</p>
+                            <label>
+                                <FormControl className={`${classes.formControl} time task_select`}>
+                                    <Select
+                                        native
+                                        value={value}
+                                        onChange={(e) => {
+                                            onChange(e.target.value);
+                                        }}
+                                        inputProps={{
+                                            name: 'user',
+                                            id: 'user-native-simple',
+                                        }}
+                                    >
+                                        {Array.from(Array(48).keys()).map((ele, i) => (
+                                            <option
+                                                key={i}
+                                                value={`${i < 20 ? '0' : ''}${i % 2 === 0 ? i / 2 : (i - 1) / 2}:${
+                                                    i % 2 === 0 ? '00' : '30'
+                                                }`}
+                                            >
+                                                {`${i < 20 ? '0' : ''}${
+                                                    (i % 2 === 0 ? i / 2 : (i - 1) / 2) > 12
+                                                        ? (i % 2 === 0 ? i / 2 : (i - 1) / 2) - 12
+                                                        : i % 2 === 0
+                                                        ? i / 2
+                                                        : (i - 1) / 2
+                                                }:${i % 2 === 0 ? '00' : '30'} ${
+                                                    (i % 2 === 0 ? i / 2 : (i - 1) / 2) > 12 ? 'PM' : 'AM'
+                                                }`}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <AccessTimeIcon className="time-cion" />
+                            </label>
+                        </div>
+                    </div>
+                    <div style={{ position: 'relative' }}>
+                        <p>Assign User:</p>
+
+                        <label>
                             <FormControl className={`${classes.formControl} task_select`}>
                                 <Select
                                     native
-                                    value={value}
+                                    value={taskDetails.assigendTo}
                                     onChange={(e) => {
-                                        onChange(e.target.value);
+                                        changehanlder('assigendTo', e.target.value);
                                     }}
                                     inputProps={{
                                         name: 'user',
                                         id: 'user-native-simple',
                                     }}
                                 >
-                                    {Array.from(Array(48).keys()).map((ele, i) => (
-                                        <option key={i} value={ele.value}>
-                                            {`${i < 20 ? '0' : ''}${i % 2 === 0 ? i / 2 : (i - 1) / 2}:${
-                                                i % 2 === 0 ? '00' : '30'
-                                            }`}
+                                    {users.findIndex((ele) => ele.value === userid && assignedto === ele.name) ===
+                                        -1 && (
+                                        <option selected value={userid + '1'}>
+                                            {assignedto}
+                                        </option>
+                                    )}
+
+                                    {users.map((ele) => (
+                                        <option key={ele.value} value={ele.value}>
+                                            {ele.name}
                                         </option>
                                     ))}
                                 </Select>
                             </FormControl>
-                        </div>
-                    </div>
-                    <div>
-                        <p>Assign User:</p>
-
-                        <FormControl className={`${classes.formControl} task_select`}>
-                            <Select
-                                native
-                                value={taskDetails.assigendTo}
-                                onChange={(e) => {
-                                    changehanlder('assigendTo', e.target.value);
-                                }}
-                                inputProps={{
-                                    name: 'user',
-                                    id: 'user-native-simple',
-                                }}
-                            >
-                                {users.findIndex((ele) => ele.value === userid && assignedto === ele.name) === -1 && (
-                                    <option selected value={userid + '1'}>
-                                        {assignedto}
-                                    </option>
-                                )}
-                                {users.map((ele) => (
-                                    <option key={ele.value} value={ele.value}>
-                                        {ele.name}
-                                    </option>
-                                ))}
-                            </Select>
-                        </FormControl>
+                            <UnfoldMoreIcon className="time-cion" />
+                        </label>
                     </div>
                     <div className="btn-bottom">
                         <DeleteIcon onClick={taskDelelteHandler} className="delete_icon" />

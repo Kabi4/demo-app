@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 // import { NavLink } from 'react-router-dom';
 // import classes from './style.module.css';
 import { local_url } from '../../localUrl';
 import './style.css';
 import Spinner from '../../Utils/Spinner/Index';
-
+import DateRangeIcon from '@material-ui/icons/DateRange';
 import { Task } from '../../Components/index';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import DatePicker from 'react-date-picker';
+import DatePicker from 'react-datepicker';
 import { makeStyles } from '@material-ui/core/styles';
 
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import AddIcon from '@material-ui/icons/Add';
 import { CSSTransition } from 'react-transition-group';
 import RemoveIcon from '@material-ui/icons/Remove';
+import UnfoldMoreIcon from '@material-ui/icons/UnfoldMore';
 const useStyles = makeStyles((theme) => ({
     formControl: {
         margin: theme.spacing(1),
@@ -144,9 +145,9 @@ const Index = ({ ...props }) => {
                             return [
                                 ...prev,
                                 {
-                                    description: taskDetails.description,
-                                    userid: taskDetails.assigendTo,
-                                    assignedto: 'Subi Sir',
+                                    task_msg: taskDetails.description,
+                                    user_id: taskDetails.assigendTo,
+                                    assigned_user: 'Subi Sir',
                                     created: `${new Date(taskDetails.date).getMonth() + 1}/${new Date(
                                         taskDetails.date
                                     ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${value}:00`,
@@ -162,7 +163,26 @@ const Index = ({ ...props }) => {
                         });
                         setModal((prev) => !prev);
                     } else {
-                        alert('Something went wrong please try again!');
+                        setPrevTasks((prev) => {
+                            return [
+                                ...prev,
+                                {
+                                    task_msg: taskDetails.description,
+                                    user_id: taskDetails.assigendTo,
+                                    assigned_user: 'Subi Sir',
+                                    created: `${new Date(taskDetails.date).getMonth() + 1}/${new Date(
+                                        taskDetails.date
+                                    ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${value}:00`,
+                                    id: -1,
+                                },
+                            ];
+                        });
+                        setTaskDetails({
+                            date: new Date(Date.now()),
+                            assigendTo: '',
+                            description: '',
+                        });
+                        alert('Since the api is not properly working!We added the task in front end!');
                     }
                 })
                 .catch((err) => {
@@ -182,7 +202,6 @@ const Index = ({ ...props }) => {
     return (
         <>
             {loading && <Spinner />}
-            <h2 className="heading">Adding New Task</h2>
 
             <div className="add_task">
                 <div className="add_task_header">
@@ -228,66 +247,89 @@ const Index = ({ ...props }) => {
                             />
                         </div>
                         <div className="display_flex">
-                            <div>
+                            <div style={{ position: 'relative' }}>
                                 <p>Date</p>
-                                <DatePicker
-                                    onChange={(value) => {
-                                        changehanlder('date', value);
-                                    }}
-                                    value={taskDetails.date}
-                                />
+                                <label>
+                                    <DatePicker
+                                        className="filter_date_picker"
+                                        placeholderText="Start Date"
+                                        selected={taskDetails.date}
+                                        onChange={(date) => {
+                                            changehanlder('date', date);
+                                            return;
+                                        }}
+                                    />
+                                    <DateRangeIcon className="date-cion" />
+                                </label>
                             </div>
-                            <div>
+                            <div style={{ position: 'relative' }}>
                                 <p>Time</p>
+                                <label>
+                                    <FormControl className={`${classes.formControl} time task_select`}>
+                                        <Select
+                                            native
+                                            value={value}
+                                            onChange={(e) => {
+                                                onChange(e.target.value);
+                                            }}
+                                            inputProps={{
+                                                name: 'user',
+                                                id: 'user-native-simple',
+                                            }}
+                                        >
+                                            {Array.from(Array(48).keys()).map((ele, i) => (
+                                                <option
+                                                    key={i}
+                                                    value={`${i < 20 ? '0' : ''}${i % 2 === 0 ? i / 2 : (i - 1) / 2}:${
+                                                        i % 2 === 0 ? '00' : '30'
+                                                    }`}
+                                                >
+                                                    {`${i < 20 ? '0' : ''}${
+                                                        (i % 2 === 0 ? i / 2 : (i - 1) / 2) > 12
+                                                            ? (i % 2 === 0 ? i / 2 : (i - 1) / 2) - 12
+                                                            : i % 2 === 0
+                                                            ? i / 2
+                                                            : (i - 1) / 2
+                                                    }:${i % 2 === 0 ? '00' : '30'} ${
+                                                        (i % 2 === 0 ? i / 2 : (i - 1) / 2) > 12 ? 'PM' : 'AM'
+                                                    }`}
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                    <AccessTimeIcon className="time-cion" />
+                                </label>
+                            </div>
+                        </div>
+                        <div style={{ position: 'relative' }}>
+                            <p>Assign User:</p>
+
+                            <label>
                                 <FormControl className={`${classes.formControl} task_select`}>
                                     <Select
                                         native
-                                        value={value}
+                                        value={taskDetails.assigendTo}
                                         onChange={(e) => {
-                                            onChange(e.target.value);
+                                            changehanlder('assigendTo', e.target.value);
                                         }}
                                         inputProps={{
                                             name: 'user',
                                             id: 'user-native-simple',
                                         }}
                                     >
-                                        {Array.from(Array(48).keys()).map((ele, i) => (
-                                            <option key={i} value={ele.value}>
-                                                {`${i < 20 ? '0' : ''}${i % 2 === 0 ? i / 2 : (i - 1) / 2}:${
-                                                    i % 2 === 0 ? '00' : '30'
-                                                }`}
+                                        <option aria-label="None" value="">
+                                            Please Select a user
+                                        </option>
+
+                                        {users.map((ele) => (
+                                            <option key={ele.value} value={ele.value}>
+                                                {ele.name}
                                             </option>
                                         ))}
                                     </Select>
                                 </FormControl>
-                            </div>
-                        </div>
-                        <div>
-                            <p>Assign User:</p>
-
-                            <FormControl className={`${classes.formControl} task_select`}>
-                                <Select
-                                    native
-                                    value={taskDetails.assigendTo}
-                                    onChange={(e) => {
-                                        changehanlder('assigendTo', e.target.value);
-                                    }}
-                                    inputProps={{
-                                        name: 'user',
-                                        id: 'user-native-simple',
-                                    }}
-                                >
-                                    <option aria-label="None" value="">
-                                        Please Select a user
-                                    </option>
-
-                                    {users.map((ele) => (
-                                        <option key={ele.value} value={ele.value}>
-                                            {ele.name}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </FormControl>
+                                <UnfoldMoreIcon className="time-cion" />
+                            </label>
                         </div>
                         <div className="btn-bottom">
                             <button
@@ -306,7 +348,7 @@ const Index = ({ ...props }) => {
                     </div>
                 </CSSTransition>
             </div>
-            <h2 className="heading">Previous Tasks</h2>
+
             <div className="tasks">
                 {prevtasks.map((ele, i) => (
                     <Task
