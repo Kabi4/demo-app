@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-// import { NavLink } from 'react-router-dom';
-// import classes from './style.module.css';
+import React, { useEffect, useState } from 'react';
+
 import { local_url } from '../../localUrl';
 import './style.css';
 import Spinner from '../../Utils/Spinner/Index';
@@ -33,7 +32,7 @@ const Index = ({ ...props }) => {
     const [modal, setModal] = useState(false);
     const [prevtasks, setPrevTasks] = useState([]);
     const [users, setUsers] = useState([]);
-    const [value, onChange] = useState(`07:00`);
+    const [value, onChange] = useState(7 * 3600);
     const [taskDetails, setTaskDetails] = useState({
         date: new Date(Date.now()),
         assigendTo: '',
@@ -106,16 +105,11 @@ const Index = ({ ...props }) => {
                     {
                         assigned_user: taskDetails.assigendTo,
                         task_date: `${new Date(taskDetails.date).getFullYear()}-${
-                            new Date(taskDetails.date).getMonth() + 1
-                        }-${new Date(taskDetails.date).getDate()}`,
-                        task_time:
-                            new Date(
-                                `${new Date(taskDetails.date).getFullYear()}-${
-                                    new Date(taskDetails.date).getMonth() + 1
-                                }-${new Date(taskDetails.date).getDate()} ${value}:00`
-                            ).getTime() / 1000,
+                            new Date(taskDetails.date).getMonth() < 9 ? '0' : ''
+                        }${new Date(taskDetails.date).getMonth() + 1}-${new Date(taskDetails.date).getDate()}`,
+                        task_time: parseInt(value),
                         is_completed: 0,
-                        time_zone: 3000,
+                        time_zone: 19800,
                         task_msg: taskDetails.description,
                     },
                     {
@@ -128,17 +122,6 @@ const Index = ({ ...props }) => {
                 )
                 .then((res) => {
                     setLoading((prev) => !prev);
-                    console.log(res);
-                    console.log({
-                        assigned_user: taskDetails.assigendTo,
-                        task_date: `${new Date(taskDetails.date).getFullYear()}-${
-                            new Date(taskDetails.date).getMonth() + 1
-                        }-${new Date(taskDetails.date).getDate()}`,
-                        task_time: value,
-                        is_completed: 0,
-                        time_zone: 3000,
-                        task_msg: taskDetails.description,
-                    });
 
                     if (res.data.code !== 500) {
                         setPrevTasks((prev) => {
@@ -150,8 +133,11 @@ const Index = ({ ...props }) => {
                                     assigned_user: 'Subi Sir',
                                     created: `${new Date(taskDetails.date).getMonth() + 1}/${new Date(
                                         taskDetails.date
-                                    ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${value}:00`,
-                                    id: -1,
+                                    ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${`${parseInt(
+                                        value / 3600
+                                    )}:${parseInt(value % 60)}`}:00`,
+                                    time: value,
+                                    id: res.data.results.id,
                                 },
                             ];
                         });
@@ -163,26 +149,7 @@ const Index = ({ ...props }) => {
                         });
                         setModal((prev) => !prev);
                     } else {
-                        setPrevTasks((prev) => {
-                            return [
-                                ...prev,
-                                {
-                                    task_msg: taskDetails.description,
-                                    user_id: taskDetails.assigendTo,
-                                    assigned_user: 'Subi Sir',
-                                    created: `${new Date(taskDetails.date).getMonth() + 1}/${new Date(
-                                        taskDetails.date
-                                    ).getDate()}/${new Date(taskDetails.date).getFullYear()} ${value}:00`,
-                                    id: -1,
-                                },
-                            ];
-                        });
-                        setTaskDetails({
-                            date: new Date(Date.now()),
-                            assigendTo: '',
-                            description: '',
-                        });
-                        alert('Since the api is not properly working!We added the task in front end!');
+                        alert('Some  api is not properly working!');
                     }
                 })
                 .catch((err) => {
@@ -278,12 +245,7 @@ const Index = ({ ...props }) => {
                                             }}
                                         >
                                             {Array.from(Array(48).keys()).map((ele, i) => (
-                                                <option
-                                                    key={i}
-                                                    value={`${i < 20 ? '0' : ''}${i % 2 === 0 ? i / 2 : (i - 1) / 2}:${
-                                                        i % 2 === 0 ? '00' : '30'
-                                                    }`}
-                                                >
+                                                <option key={i} value={(i / 2) * 60 * 60}>
                                                     {`${i < 20 ? '0' : ''}${
                                                         (i % 2 === 0 ? i / 2 : (i - 1) / 2) > 12
                                                             ? (i % 2 === 0 ? i / 2 : (i - 1) / 2) - 12
@@ -365,6 +327,7 @@ const Index = ({ ...props }) => {
                         taskDeleted={() => {
                             taskDeleted(i);
                         }}
+                        time={ele.task_time}
                     />
                 ))}
             </div>

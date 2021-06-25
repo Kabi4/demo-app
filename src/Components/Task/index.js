@@ -26,15 +26,11 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(2),
     },
 }));
-const Index = ({ description, taskDeleted, toggleLoading, created, userid, id, assignedto, users, ...props }) => {
+const Index = ({ description, taskDeleted, time, toggleLoading, created, userid, id, assignedto, users, ...props }) => {
     const classes = useStyles();
 
     const [modal, setModal] = useState(false);
-    const [value, onChange] = useState(
-        `${new Date(created).getHours() < 10 ? '0' : ''}${new Date(created).getHours()}:${
-            new Date(created).getMinutes() % 30 !== 0 ? '00' : new Date(created).getMinutes() % 30
-        }`
-    );
+    const [value, onChange] = useState(time);
     const [taskDetails, setTaskDetails] = useState({
         date: new Date(created),
         assigendTo: userid + '1',
@@ -47,7 +43,7 @@ const Index = ({ description, taskDeleted, toggleLoading, created, userid, id, a
             return old;
         });
     };
-    console.log(description, created, userid, id, assignedto);
+
     const onUpdateHandler = async (e) => {
         e.preventDefault();
         toggleLoading();
@@ -57,14 +53,9 @@ const Index = ({ description, taskDeleted, toggleLoading, created, userid, id, a
                 {
                     assigned_user: taskDetails.assigendTo,
                     task_date: `${new Date(taskDetails.date).getFullYear()}-${
-                        new Date(taskDetails.date).getMonth() + 1
-                    }-${new Date(taskDetails.date).getDate()}`,
-                    task_time:
-                        new Date(
-                            `${new Date(taskDetails.date).getFullYear()}-${
-                                new Date(taskDetails.date).getMonth() + 1
-                            }-${new Date(taskDetails.date).getDate()} ${value}:00`
-                        ).getTime() / 1000,
+                        new Date(taskDetails.date).getMonth() < 9 ? '0' : ''
+                    }${new Date(taskDetails.date).getMonth() + 1}-${new Date(taskDetails.date).getDate()}`,
+                    task_time: parseInt(value),
                     is_completed: 0,
                     time_zone: 3000,
                     task_msg: taskDetails.description,
@@ -190,12 +181,7 @@ const Index = ({ description, taskDeleted, toggleLoading, created, userid, id, a
                                         }}
                                     >
                                         {Array.from(Array(48).keys()).map((ele, i) => (
-                                            <option
-                                                key={i}
-                                                value={`${i < 20 ? '0' : ''}${i % 2 === 0 ? i / 2 : (i - 1) / 2}:${
-                                                    i % 2 === 0 ? '00' : '30'
-                                                }`}
-                                            >
+                                            <option key={i} value={(i / 2) * 60 * 60}>
                                                 {`${i < 20 ? '0' : ''}${
                                                     (i % 2 === 0 ? i / 2 : (i - 1) / 2) > 12
                                                         ? (i % 2 === 0 ? i / 2 : (i - 1) / 2) - 12
